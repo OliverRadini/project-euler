@@ -15,7 +15,7 @@ function factors (n, factorCache = {}) {
         }
     }
 
-    return Object.keys(factors);
+    return Object.keys(factors).map(Number);
 }
 
 module.exports = {
