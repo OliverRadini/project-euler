@@ -3,38 +3,42 @@ const { readFileSync } = require("fs");
 const raw = readFileSync("./008/data", "utf8");
 
 /**
- *
 As a dynamic programming problem:
-    1. What is the subproblem?
-    Each number can be thought of as digit1 + digit2 + digit3
+    1. split the number into pairs:
+    ie: 432112345 => [4, 3], [3, 2], [2, 1], [1, 1], [1, 2], [2, 3], [3, 4], [4, 5]
 
-    2. How would we recurse this?
-    We could have a list of known digit positions, then add to them
-    the highest numbers
+    2. multiply pairs (now sequences of 2)
+    ie [12, 6, 2, 1, 2, 6, 12, 20]
+
+    3. group skipping
+    ie [12, 2], [6, 1], [2, 2], [1, 6], [2, 12], [6, 20]
+
+    4. multiply pairs (now sequences of 4)
+    ie [24, 6, 4, 6, 24, 120]
+
  */
-function getHighestDigitOfSize(n, s, is, count=0) {
-    if (is && (count === n || is.length === 1)) {
-        return s.substring(is[0], is[0]+n);
+
+function toPairs(x) {
+    const result = [];
+    for (let i = 0; i < x.length-1; i++) {
+        result.push([x[i], x[i+1]]);
     }
-
-    const indices = is === undefined
-        ? [...s.matchAll(/9/g, )].map(x => x.index)
-        : is;
-
-    const nexts = indices
-        .map(i => ({ i, n: s[i+1+count] }));
-
-    const biggestNext = nexts.sort((a, b) => Number(a.n) > Number(b.n) ? -1 : 1)[0].n;
-
-    const onlyBiggestNexts = nexts
-        .filter(({ n }) => n === biggestNext)
-        .map(({ i }) => i);
-
-    return getHighestDigitOfSize(n, s, onlyBiggestNexts, count + 1);
+    return result;
 }
 
-// TODO: this is not quite right; the highest product may still include
-//       numbers which would have been missed by this
-const result = getHighestDigitOfSize(13, raw);
+function findHighestProductOfSize(xs, n) {
+    const maxFromPairs = (n - (n % 2)) / 2;
 
-console.log(result);
+    let current = xs;
+    for (let i = 0; i < maxFromPairs; i++) {
+        const asPairs = toPairs(current);
+        console.log(asPairs);
+        const multiplied = asPairs.map(([a, b]) => a * b);
+        current = multiplied;
+    }
+
+    return current;
+}
+
+const test = findHighestProductOfSize([4, 3, 2, 1, 1, 2, 3, 4, 5], 4);
+console.log(test);
