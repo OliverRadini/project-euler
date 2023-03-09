@@ -12,26 +12,42 @@ let rows = readFileSync("./011/data", "utf8")
 
 let foundMax = -1;
 
-function scanRowsForMax () {
-    for (let i = 0; i < rows.length; i++) {
-        const thisRow = rows[i];
+// horizontal
+for (let i = 0; i < rows.length; i++) {
+    const thisRow = rows[i];
 
-        for (let j = 0; j < thisRow.length - 3; j++) {
-            const thisValue = thisRow[j] * thisRow[j + 1] * thisRow[j + 2] * thisRow[j + 3];
+    for (let j = 0; j < thisRow.length - 3; j++) {
+        const thisValue = thisRow[j] * thisRow[j + 1] * thisRow[j + 2] * thisRow[j + 3];
 
-            if (thisValue > foundMax) {
-                foundMax = thisValue;
-            }
+        if (thisValue > foundMax) {
+            foundMax = thisValue;
         }
     }
 }
 
-// horizontal
-scanRowsForMax();
+//diagonal right
+for (let i = 0; i < rows.length - 3; i++) {
+    for (let j = 0; j < rows[0].length - 3; j++) {
+        const result = rows[i][j] * rows[i+1][j+1] * rows[i+2][j+2] * rows[i+3][j+3];
 
-console.log(foundMax);
-rows = rotate2dArray(rows);
+        console.log(`${rows[i][j]} * ${rows[i+1][j+1]} * ${rows[i+2][j+2]} * ${rows[i+3][j+3]}`);
+        if (result > foundMax) {
+            foundMax = result;
+        }
+    }
+}
 
-scanRowsForMax();
+//diagonal left
+for (let i = 0; i < rows.length - 3; i++) {
+    for (let j = 3; j < rows[0].length; j++) {
+        const result = rows[i][j] * rows[i+1][j-1] * rows[i+2][j-2] * rows[i+3][j-3];
+
+        console.log(`${rows[i][j]} * ${rows[i+1][j-1]} * ${rows[i+2][j-2]} * ${rows[i+3][j-3]}`);
+        if (result > foundMax) {
+            foundMax = result;
+        }
+    }
+}
+
 
 console.log(foundMax);
