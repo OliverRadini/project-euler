@@ -15,6 +15,7 @@ NOTE: Once the chain starts the terms are allowed to go above one million.
 */
 const results = { 1: 1 };
 let max = -1;
+let foundMax = -1;
 
 function nextCollatz (n) {
     if (n % 2 === 0) {
@@ -27,24 +28,24 @@ function nextCollatz (n) {
 
 for (let i = 2; i < 1000000; i++) {
     let x = i;
-    let chain = [];
+    let chainLength = 1;
 
     while (true) {
-        chain.push(x);
-
         if (results[x] !== undefined) {
-            const thisChainLength = chain.length + results[x] - 1;
+            const thisChainLength = chainLength + results[x];
             results[i] = thisChainLength;
 
             if (thisChainLength > max) {
                 max = thisChainLength;
+                foundMax = i;
             }
             break;
         }
 
+        chainLength++;
         x = nextCollatz(x);
     }
 }
 
-const abc = results[13];
-const test = 1;
+
+console.log(foundMax);
