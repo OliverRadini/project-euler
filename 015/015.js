@@ -18,16 +18,28 @@ How many such routes are there through a 20×20 grid?
  * We, from each node, remember the path to the end,
  * and we can just build them up from there
  */
-const nodes = {};
+const nodes = [];
 const size = 2;
 
 for (let x = 0; x < size; x++) {
     for (let y = 0; y < size; y++) {
-        nodes[`${x}-${y}`] = {
-        };
+        nodes[`${x}-${y}`] = { x, y };
     }
 }
 
+const edges = {};
 
-console.log(nodes)
+function buildEdgesForNode ({ x, y }) {
+    return [
+        [x, y-1],
+        [x-1, y], [x+1, y],
+        [x, y+1]
+    ]
+        .filter(([x1, y1]) => x1 > 0 && x1 < size && y1 > 0 && y1 < size)
+        .map(([x1, y1]) => ({ from: { x, y } , to: { x1, y1 }}));
+}
+
+
+const test = Object.values(nodes).map(buildEdgesForNode);
+console.log(test);
 
