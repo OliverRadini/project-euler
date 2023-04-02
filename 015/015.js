@@ -19,7 +19,7 @@ How many such routes are there through a 20×20 grid?
  * and we can just build them up from there
  */
 const nodes = [];
-const size = 2;
+const size = 3;
 
 for (let x = 0; x < size; x++) {
     for (let y = 0; y < size; y++) {
@@ -27,19 +27,68 @@ for (let x = 0; x < size; x++) {
     }
 }
 
-const edges = {};
-
 function buildEdgesForNode ({ x, y }) {
     return [
         [x, y-1],
         [x-1, y], [x+1, y],
         [x, y+1]
     ]
-        .filter(([x1, y1]) => x1 > 0 && x1 < size && y1 > 0 && y1 < size)
-        .map(([x1, y1]) => ({ from: { x, y } , to: { x1, y1 }}));
+        .filter(([x1, y1]) => x1 >= 0 && x1 < size && y1 >= 0 && y1 < size)
+        .map(([x1, y1]) => ({ from: { x, y } , to: { x: x1, y: y1 }}));
 }
 
+const edges = Object.values(nodes)
+    .map(buildEdgesForNode)
+    .flat();
 
-const test = Object.values(nodes).map(buildEdgesForNode);
-console.log(test);
+const edgeLookup = edges.reduce((p, c) => {
+    const key = `${c.from.x}, ${c.from.y}`;
+    if (p[key] !== undefined) {
+        p[key].push(c.to);
+    } else {
+        p[key] = [c.to];
+    }
+    return p;
+}, {});
 
+/**
+ * 
+ * @param {Object} from with x and y properties, the from node
+ * @param {Object} to  with x and y properties, the target node
+ * @param {Array<Object>} visited of visited coordinates
+ * @returns an array of arrays of all possible paths, represnted as coordinate objects
+ */
+function buildPathsFromTo(from, to, visited = []) {
+    if (from.x === to.x && from.y === to.y) {
+        return [[to]];
+    }
+
+    const nextNodes = edgeLookup[`${from.x}, ${from.y}`]
+        .filter(a => !visited.some(b => a.x === b.x && a.y === b.y));
+
+    if (nextNodes.length === 0) {
+        return null;
+    }
+
+    const nextVisited = [...visited, from];
+
+    const nextPaths = nextNodes
+        .flatMap(node => buildPathsFromTo(node, to, nextVisited))
+        .reduce((p, c) => {
+            if (c === null) { 
+                return p;
+            }
+
+            return [...p, c];
+        }, [])
+        
+    const withFrom = nextPaths
+        .map(path => [from, ...path]);
+       
+    return withFrom;
+}
+
+const paths = buildPathsFromTo({ x: 0, y: 0}, {x: size - 1, y: size - 1});
+
+console.log(edges);
+console.log(edgeLookup);
