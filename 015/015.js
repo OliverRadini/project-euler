@@ -1,78 +1,34 @@
-/*
-Starting in the top left corner of a 2×2 grid, and only being able to move
-to the right and down, there are exactly 6 routes to the bottom right corner.
+// note that the size of the path is fixed as n + 1
 
-How many such routes are there through a 20×20 grid?
-*/
+const size = 20;
 
-const nodes = [];
-const size = 5;
-
-for (let x = 0; x < size; x++) {
-    for (let y = 0; y < size; y++) {
-        nodes[`${x}-${y}`] = { x, y };
-    }
-}
-
-function buildEdgesForNode ({ x, y }) {
-    return [
-        [x+1, y],
-        [x, y+1]
-    ]
-        .filter(([x1, y1]) => x1 >= 0 && x1 < size && y1 >= 0 && y1 < size)
-        .map(([x1, y1]) => ({ from: { x, y } , to: { x: x1, y: y1 }}));
-}
-
-const edges = Object.values(nodes)
-    .map(buildEdgesForNode)
-    .flat();
-
-const edgeLookup = edges.reduce((p, c) => {
-    const key = `${c.from.x}, ${c.from.y}`;
-    if (p[key] !== undefined) {
-        p[key].push(c.to);
-    } else {
-        p[key] = [c.to];
-    }
-    return p;
-}, {});
-
+const max = parseInt(Array.from(Array(size + 1)).map(() => "1").join(""), 2);
 
 const foundPaths = [];
-const pathQueue = [[{ x: 0, y: 0 }]];
-while (true) {
-    if (pathQueue.length % 100 === 0) {
-        console.log(pathQueue.length);
-        console.log(foundPaths.length);
-    }
-    if (pathQueue.length === 0) {
-        break;
-    }
+let count = 0;
+for (let i = 0; i < max; i++) {
+    const inBase2 = (i >>> 0).toString(2).padStart(size + 1, "0");
 
-    const workingPath = pathQueue[0];
-    pathQueue.shift();
-
-    const lastNode = workingPath[workingPath.length - 1];
-
-    if (lastNode.x === size - 1 && lastNode.y === size - 1) {
-        foundPaths.push([...workingPath, lastNode]);
+    if (inBase2.length !== size + 1) {
         continue;
     }
 
-    const nextNodes = edgeLookup[`${lastNode.x}, ${lastNode.y}`]
-        .filter(a => !workingPath.some(b => a.x === b.x && a.y === b.y));
+    let zeroes = 0;
+    let ones = 0;
 
-    if (nextNodes.length === 0) {
-        continue;
+    for (let j = 0; j < inBase2.length; j++) {
+        if (inBase2[j] === "0") {
+            zeroes++;
+        } else {
+            ones++
+        }
     }
 
-    const nextPaths = nextNodes.map(node => [...workingPath, node]);
-
-    for (let path of nextPaths) {
-        pathQueue.push(path);
+    if (ones === zeroes) {
+        count++;
+        foundPaths.push(inBase2);
     }
 }
 
-console.log(foundPaths.map(path => path.map(node => `(${node.x}, ${node.y})`).join(", ")));
-console.log(foundPaths.map(x => x.length));
-console.log(foundPaths.length);
+console.log(foundPaths);
+console.log(count);
