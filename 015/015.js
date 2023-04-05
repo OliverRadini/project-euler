@@ -9,25 +9,26 @@ const min = parseInt(
 );
 const max = parseInt(Array.from(Array(sizeOfRoute)).map(() => "1").join(""), 2);
 
+if (max > Number.MAX_SAFE_INTEGER) {
+    throw new Error("Grid is too large to process");
+}
+
 console.log(`min is ${min}, max is ${max}`);
 
 const foundPaths = [];
 let count = 0;
 for (let i = min; i < max; i++) {
-    const inBase2 = (i >>> 0).toString(2).padStart(sizeOfRoute, "0");
-
-    let zeroes = 0;
-    let ones = 0;
-
-    for (let j = 0; j < inBase2.length; j++) {
-        if (inBase2[j] === "0") {
-            zeroes++;
-        } else {
-            ones++
-        }
+    if (i % 10000 === 0) {
+        const percent = (i / max) * 100;
+        console.log(`${percent}%`);
+    }
+    let oneCount = 0;
+    const n = Math.floor(Math.log2(i));
+    for (let j = 0; j < n; j++) {
+        oneCount += (i & (1<<j))
     }
 
-    if (ones === zeroes) {
+    if (oneCount === (size - 1)) {
         count++;
     }
 }
