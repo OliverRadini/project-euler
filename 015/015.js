@@ -1,51 +1,62 @@
-// for a grid of size n, how many routes are added with a new layer?
 
-/**
- * 
- * Adding a layer above and to the left:
- * 
- *     ooo          xxxx
- *     ooo    -->   xooo 
- *     ooo          xooo
- *                  xooo
- * 
- *    1 + 2 + 4 + 2 + 1 = 10 (for third layer added)
- * 
- *    1 + 2 + 3 + 6 + 3 + 2 + 1 = 18 (for the fourth layer)
- * 
- * 
- * With each new layer that is added, 2n + 1 squares are added.
- * 
- * The corner square can go to every other square that's added.
- * 
- * Every other square can go to the square along its edge to the
- * right/down of it; not both, so, for each edge:
- * 
- * 1 + 2 + 3 ... + (n - 1)
- * 
- * This is the triangular number (n-1)
- * 
- * This is calculated as (x^2 + x) / 2
- * 
- * (n-1)(n-1) = n^2 - 2n + 1
- * 
- * So then each edge adds:
- * 
- * (n^2 - n) / 2
- * 
- * As we have two edges, these therefore add:
- * 
- * (n^2 - n) routes
- * 
- * The corner piece adds 2n - 2 routes
- * 
- * So, the total number of routes added per layer is:
- * 
- * n^2 + n - 2
- * 
- * Not typically that simple though; as it depends on the square that it is connected to
- * 
- * You need to know the number of routes out of the block that you're connecting to
- * 
- */
+const size = 3;
 
+function getNextNodes (x, y, sizeIn) {
+    const points = [];
+    if (x < sizeIn - 1) {
+        points.push({ x: x + 1, y });
+    }
+
+    if (y < sizeIn - 1) {
+        points.push({ x, y: y + 1});
+    }
+
+    return points;
+}
+
+function getKey(x, y) {
+    return `${x}, ${y}`;
+}
+
+function pointsAreEqual(a, b) {
+    return a.x === b.x && a.y === b.y;
+}
+
+
+const nextNodeCache = {}
+for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+        nextNodeCache[getKey(x, y)] = getNextNodes(x, y, size);
+    }
+}
+
+function getPathsFromTo (from, to) {
+    if (pointsAreEqual(from, to)) {
+        return [];
+    }
+
+    const nextNodes = nextNodeCache[getKey(from.x, from.y)];
+
+    const allPathsFromThisNode = nextNodes
+        .map(node => getPathsFromTo(node, to));
+
+    const flattenedPaths = allPathsFromThisNode
+        .reduce(
+            (p, c) => [...p, ...c],
+            []
+        )
+        .map(x => [from, ...x]);
+
+    console.log(`returning ${JSON.stringify(flattenedPaths)}`);
+
+    return flattenedPaths;
+}
+
+
+console.log(nextNodeCache);
+
+
+module.exports = {
+    getNextNodes,
+    getPathsFromTo
+};
