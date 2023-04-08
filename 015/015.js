@@ -1,5 +1,5 @@
 
-const size = 3;
+const size = 15;
 
 function getNextNodes (x, y, sizeIn) {
     const points = [];
@@ -30,9 +30,16 @@ for (let y = 0; y < size; y++) {
     }
 }
 
+const pathCache = {};
+
 function getPathsFromTo (from, to) {
     if (pointsAreEqual(from, to)) {
-        return [];
+        return [[from]];
+    }
+
+    const cacheKey = `${from.x} ${from.y} ${to.x} ${to.y}`;
+    if (pathCache[cacheKey] !== undefined) {
+        return pathCache[cacheKey];
     }
 
     const nextNodes = nextNodeCache[getKey(from.x, from.y)];
@@ -42,19 +49,30 @@ function getPathsFromTo (from, to) {
 
     const flattenedPaths = allPathsFromThisNode
         .reduce(
-            (p, c) => [...p, ...c],
+            (p, c) => {
+                for (let i = 0; i < c.length; i++) {
+                    p.push(c[i]);
+                }
+
+                return p;
+            },
             []
         )
-        .map(x => [from, ...x]);
+        .map(x => {
+            x.unshift(from);
+            return x;
+        });
 
-    console.log(`returning ${JSON.stringify(flattenedPaths)}`);
+    pathCache[cacheKey] = flattenedPaths;
 
     return flattenedPaths;
 }
 
 
-console.log(nextNodeCache);
-
+getPathsFromTo({x: 10, y: 10}, {x: size - 1, y: size - 1});
+getPathsFromTo({x: 9, y: 10}, {x: size - 1, y: size - 1});
+getPathsFromTo({x: 9, y: 9}, {x: size - 1, y: size - 1});
+console.log(getPathsFromTo({x: 0, y: 0}, {x: size - 1, y: size - 1}).length);
 
 module.exports = {
     getNextNodes,
