@@ -1,3 +1,4 @@
+const { uniqueBy } = require("../general/uniqueBy");
 
 const size = 15;
 
@@ -33,12 +34,14 @@ for (let y = 0; y < size; y++) {
 const pathCache = {};
 
 function getPathsFromTo (from, to) {
+    console.log(`Getting path (${from.x}, ${from.y})`);
     if (pointsAreEqual(from, to)) {
         return [[from]];
     }
 
     const cacheKey = `${from.x} ${from.y} ${to.x} ${to.y}`;
     if (pathCache[cacheKey] !== undefined) {
+        console.log(`>>>>>>>> Using cache for ${cacheKey}`);
         return pathCache[cacheKey];
     }
 
@@ -68,13 +71,54 @@ function getPathsFromTo (from, to) {
     return flattenedPaths;
 }
 
+function getPreviousNodes (x, y) {
+    const points = [];
+    if (x > 0) {
+        points.push({x: x - 1, y });
+    }
 
-getPathsFromTo({x: 10, y: 10}, {x: size - 1, y: size - 1});
-getPathsFromTo({x: 9, y: 10}, {x: size - 1, y: size - 1});
-getPathsFromTo({x: 9, y: 9}, {x: size - 1, y: size - 1});
-console.log(getPathsFromTo({x: 0, y: 0}, {x: size - 1, y: size - 1}).length);
+    if (y > 0) {
+        points.push({ x, y: y - 1 });
+    }
+
+    return points;
+}
+
+const targetNode = { x: size - 1, y: size - 1 };
+let currentNode = targetNode;
+let nextNodes = getPreviousNodes(currentNode.x, currentNode.y);
+
+let dummyI = 0;
+const checkedNodes = {};
+
+while (nextNodes.length > 0) {
+    console.log(dummyI);
+    dummyI++;
+    for (let i = 0; i < nextNodes.length; i++) {
+        getPathsFromTo(nextNodes[i], targetNode);
+    }
+
+    const nodesToCheck = [...nextNodes];
+
+    nextNodes = [];
+
+    for (let i = 0; i < nodesToCheck.length; i++) {
+        const nextNodesToAdd = getPreviousNodes(nodesToCheck[i].x, nodesToCheck[i].y)
+            .filter(node => checkedNodes[getKey(node)] === undefined);
+
+        nextNodes = nextNodes.concat(nextNodesToAdd);
+    }
+
+    nextNodes = uniqueBy(nextNodes, node => getKey(node.x, node.y));
+}
+
+
+
+
+// console.log(getPathsFromTo({x: 0, y: 0}, {x: size - 1, y: size - 1}).length);
 
 module.exports = {
     getNextNodes,
-    getPathsFromTo
+    getPathsFromTo,
+    getPreviousNodes,
 };

@@ -1,4 +1,4 @@
-const { getNextNodes, getPathsFromTo } = require("./015");
+const { getNextNodes, getPathsFromTo, getPreviousNodes } = require("./015");
 
 let lastCalledFunction = null;
 
@@ -49,4 +49,14 @@ test("It should return one path when two above the target", getPathsFromTo({ x: 
 test("It should return an array of arrays", getPathsFromTo({ x: 0, y: 0 }, { x: 2, y: 2}).every(x => Array.isArray(x)), true);
 
 test("It should return 6 paths when going from (0, 0) to (2, 2)", getPathsFromTo({ x: 0, y: 0 }, { x: 2, y: 2}).length, 6);
+
+testing = "getBackwardsSurroundingSquares";
+
+test("It should return 1 point when at the top", getPreviousNodes(2, 0).length, 1);
+
+test("It should return 1 point when on the left", getPreviousNodes(0, 2).length, 1);
+
+test("It should return 2 points when not on an edge", getPreviousNodes(2, 2).length, 2);
+
+test("It should return 0 points when in the top left", getPreviousNodes(0, 0).length, 0);
 
