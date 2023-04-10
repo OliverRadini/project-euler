@@ -34,14 +34,12 @@ for (let y = 0; y < size; y++) {
 const pathCache = {};
 
 function getPathsFromTo (from, to) {
-    console.log(`Getting path (${from.x}, ${from.y})`);
     if (pointsAreEqual(from, to)) {
         return [[from]];
     }
 
     const cacheKey = `${from.x} ${from.y} ${to.x} ${to.y}`;
     if (pathCache[cacheKey] !== undefined) {
-        console.log(`>>>>>>>> Using cache for ${cacheKey}`);
         return pathCache[cacheKey];
     }
 
@@ -50,21 +48,22 @@ function getPathsFromTo (from, to) {
     const allPathsFromThisNode = nextNodes
         .map(node => getPathsFromTo(node, to));
 
+    performance.mark("flattendPaths");
+
     const flattenedPaths = allPathsFromThisNode
         .reduce(
             (p, c) => {
-                for (let i = 0; i < c.length; i++) {
-                    p.push(c[i]);
-                }
-
-                return p;
+                return [...p, ...c];
             },
             []
         )
         .map(x => {
-            x.unshift(from);
-            return x;
+            return [from, ...x];
         });
+
+
+    const flattendPathsMeasure = performance.measure("flattendPaths");
+    console.log(flattendPathsMeasure.duration);
 
     pathCache[cacheKey] = flattenedPaths;
 
@@ -92,7 +91,6 @@ let dummyI = 0;
 const checkedNodes = {};
 
 while (nextNodes.length > 0) {
-    console.log(dummyI);
     dummyI++;
     for (let i = 0; i < nextNodes.length; i++) {
         getPathsFromTo(nextNodes[i], targetNode);
@@ -109,13 +107,14 @@ while (nextNodes.length > 0) {
         nextNodes = nextNodes.concat(nextNodesToAdd);
     }
 
+
     nextNodes = uniqueBy(nextNodes, node => getKey(node.x, node.y));
 }
 
 
 
 
-// console.log(getPathsFromTo({x: 0, y: 0}, {x: size - 1, y: size - 1}).length);
+console.log(getPathsFromTo({x: 0, y: 0}, {x: size - 1, y: size - 1}).length);
 
 module.exports = {
     getNextNodes,
