@@ -13,9 +13,9 @@ for (let i = 1; i < 1000; i++) {
     const asWord = numberToWord(i);
     console.log(asWord);
 
-    total += numberToWord(i).length;
+    total += asWord.replace(/ /g, "").length;
 }
 
-total += "one thousand".length;
+total += "onethousand".length;
 
 console.log(total);
