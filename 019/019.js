@@ -1,2 +1,13 @@
+const days = require("../general/days");
 
-const dayCount = (8 * 31) + 28 + (3 * 30);
+let year = 1901;
+
+const getNextDay = days(year);
+while (year < 2002) {
+    const nextDay = getNextDay.next();
+
+    year = nextDay.value.year;
+
+    console.log(nextDay.value);
+}
+
