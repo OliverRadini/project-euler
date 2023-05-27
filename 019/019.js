@@ -1,13 +1,19 @@
 const days = require("../general/days");
 
-let year = 1901;
+const maxYear = 2001;
 
-const getNextDay = days(year);
-while (year < 2002) {
-    const nextDay = getNextDay.next();
+let currentDay = { year: 1900, month: 0, day: 0 };
+const getNextDay = days(currentDay.year, currentDay.month, currentDay.day);
 
-    year = nextDay.value.year;
+let dayOfTheWeek = 0;
 
-    console.log(nextDay.value);
+let currentYear = currentDay.year;
+
+while (currentYear <= maxYear) {
+    currentYear = currentDay.year;
+    console.log(dayOfTheWeek);
+    console.log(currentDay);
+
+    dayOfTheWeek = (dayOfTheWeek + 1) % 7;
+    currentDay = getNextDay.next().value;
 }
-
