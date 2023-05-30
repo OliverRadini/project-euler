@@ -21,12 +21,14 @@ function* days(startYear, startMonth=0, startDay=0) {
     while (true) {
         yield { day: day, month: month, year: year };
 
-        const daysInMonth = daysInMonths[month];
         day++;
+        const isLeap =  ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+
+        const daysInMonth = isLeap && month === 1 ? 29 : daysInMonths[month];
 
         if (day >= daysInMonth) {
             day = 0;
-            
+
             if (month === daysInMonths.length - 1) {
                 month = 0;
                 year++;
