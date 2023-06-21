@@ -55,7 +55,7 @@ function mergeSort (f, xs) {
         lists = newLists;
     }
 
-    return lists;
+    return lists[0];
 }
 
 module.exports = {
