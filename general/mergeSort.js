@@ -27,7 +27,7 @@ function mergeLists (l, r, f) {
         li++;
     }
 
-    while (ri < lMax) {
+    while (ri < rMax) {
         out.push(r[ri]);
         ri++;
     }
@@ -48,8 +48,13 @@ function mergeSort (f, xs) {
     while (lists.length > 1) {
         const newLists = [];
 
-        for (let i = 0; i < lists.length - 1; i += 2) {
+        let i;
+        for (i = 0; i < lists.length - 1; i += 2) {
             newLists.push(mergeLists(lists[i], lists[i + 1], f));
+        }
+
+        if (lists[i] !== undefined) {
+            newLists[newLists.length - 1] = mergeLists(newLists[newLists.length-1], lists[i], f);
         }
 
         lists = newLists;
