@@ -32,7 +32,7 @@ const abundantNumbers = [];
 const matches = [];
 
 for (let i = 0; i < maximum; i++) {
-    matches.push[i];
+    matches.push(i);
 
     if (isAbundant(i)) {
         abundantNumbers.push(i);
@@ -61,4 +61,5 @@ for (let i = 0; i < maximum; i++) {
     }
 }
 
-const a = 1;
+const result = matches.reduce((p, c) => p + c, 0);
+console.log(result);
