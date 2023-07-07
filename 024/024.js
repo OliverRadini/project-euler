@@ -11,45 +11,23 @@ What is the millionth lexicographic permutation of
 the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?
 */
 
+const allNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const targetLength = allNumbers.length;
 
-function hasEveryDigit(n) {
-    const digits = {
-        0: false,
-        1: false,
-        2: false,
-        3: false,
-        4: false,
-        5: false,
-        6: false,
-        7: false,
-        8: false,
-        9: false,
-    };
+function getUnusedNumbers(x) {
+    const has = { "0": false, "1": false, "2": false, "3": false, "4": false, "5": false, "6": false, "7": false, "8": false, "9": false };
 
-    for (let i = 0; i < n.length; i++) {
-        digits[n[i]] = true;
+    for (let i = 0; i < x.length; i++) {
+        delete has[x[i]];
     }
 
-    return Object.values(digits).every(x => x === true);
+    return Object.keys(has);
 }
 
-const TARGET_COUNT = 1000000;
-let count = 0;
-let i = BigInt(123456789);
+function getAllCombinationsFrom(x) {
 
-while (count < TARGET_COUNT) {
-    let thisInstance = `${i}`.padStart(10, "0");
-
-    if (thisInstance.length > 10) {
-        break;
-    }
-
-    if (hasEveryDigit(thisInstance)) {
-        count++;
-        console.log(100*(count/TARGET_COUNT));
-    }
-
-    i++;
 }
 
-console.log(`Instance ${count} is ${i}`);
+const test = getUnusedNumbers("123");
+
+const a = 1;
