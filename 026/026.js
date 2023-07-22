@@ -1,24 +1,22 @@
 const { chunk } = require("../general/chunk");
 
-const maxDenominator = BigInt(1000);
-
-let numerator = BigInt(10);
-
-for (let i = 0; i < 1000; i++) {
-    numerator = numerator * BigInt(10);
-}
-
-function countPatternSize (n) {
-    const s = String(n).replace(".", "");
-}
-
 const maxRepeatingPattern = 499;
 
-for (let d = BigInt(2); d < maxDenominator; d++) {
-    const decimal = String(numerator / d);
+for (let d = 2; d < 1000; d++) {
+    const decimal = String(1 / d).replace("0.", "");
+
+    const allSameDigit = [...decimal].every(x => x === decimal[0]);
+
+    if (allSameDigit) {
+        continue;
+    }
 
     for (let i = 2; i < maxRepeatingPattern; i++) {
         const theseChunks = chunk(i, decimal);
+
+        if (theseChunks.length <= 1) {
+            continue;
+        }
 
         const compareChunk = String(theseChunks[0]);
 
@@ -28,16 +26,8 @@ for (let d = BigInt(2); d < maxDenominator; d++) {
         );
 
         if (allEqual) {
-            console.log(`1/${d}`);
+            console.log(`1/${d} has a repeating pattern of ${compareChunk}`);
         }
     }
-
-    // const max
-
-    // for (let i = 0; i < )
-
-    // for every length up to l / 2
-    // compare the patterns of each size
-    // see if the pattern is repeated throughout
 }
 
