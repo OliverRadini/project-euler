@@ -14,6 +14,10 @@ for (let d = 2; d < 1000; d++) {
     for (let i = 2; i < maxRepeatingPattern; i++) {
         const theseChunks = chunk(i, decimal);
 
+        if (d === 17 && i >= 10) {
+            const a = 1;
+        }
+
         if (theseChunks.length <= 1) {
             continue;
         }
@@ -21,7 +25,19 @@ for (let d = 2; d < 1000; d++) {
         const compareChunk = String(theseChunks[0]);
 
         const allEqual = theseChunks.reduce(
-            (p, c) => p && String(c) === compareChunk,
+            (p, c) => {
+                if (!p) {
+                    return false;
+                }
+
+                for (let ci = 0; ci < c.length; ci++) {
+                    if (c[ci] !== compareChunk[ci]) {
+                        return false
+                    }
+                }
+
+                return true;
+            },
             true,
         );
 
